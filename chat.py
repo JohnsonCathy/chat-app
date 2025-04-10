@@ -25,10 +25,6 @@ def receive_messages():
                 # Display the incoming message in the chat window
                 chat_window.config(state=tk.NORMAL)  # Enable editing the chat window
                 
-                # Strip off the username from the message (everything before ": ")
-                if ": " in message:
-                    message = message.split(": ", 1)[1]  # Strip the username and show only the message part
-                
                 # Display the stripped message in the chat window
                 chat_window.insert(tk.END, message + "\n")
                 chat_window.yview(tk.END)  # Scroll to the bottom
@@ -38,10 +34,10 @@ def receive_messages():
             break
 
 # Function to send messages to the server
-def send_message(event=None):
+def send_message():
     message = message_entry.get()  # Get the text from the message entry box
     if message:
-        formatted_message = f"{username}: {message}"  # Add username to the message
+        formatted_message = f"{message}"
         try:
             client_socket.send(formatted_message.encode('utf-8'))  # Send message to server
             message_entry.delete(0, tk.END)  # Clear the message entry box after sending
