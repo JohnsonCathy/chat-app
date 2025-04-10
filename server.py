@@ -3,7 +3,7 @@ import threading
 
 # Server configuration
 HOST = '0.0.0.0'  # Listen on all available interfaces
-PORT = 12345       # Port to listen on
+PORT = 5000       # Port to listen on
 
 # List to maintain active connections
 clients = []
@@ -38,12 +38,12 @@ def handle_client(client_socket, client_address):
 # Broadcast message to all connected clients except the sender
 def broadcast_message(message, sender_socket):
     for client in clients:
-        if client != sender_socket:
-            try:
-                client.send(message.encode('utf-8'))
-            except:
-                # In case of error, remove the client
-                clients.remove(client)
+        try:
+            # Send the message to every client, including the sender
+            client.send(message.encode('utf-8'))
+        except:
+            # In case of error, remove the client
+            clients.remove(client)
 
 # Main server loop
 def start_server():

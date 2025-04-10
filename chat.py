@@ -6,7 +6,7 @@ import sys
 
 # Server configuration
 HOST = '127.0.0.1'  # Server IP address
-PORT = 12345        # Server port
+PORT = 5000        # Server port
 
 # Client socket setup
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -24,6 +24,12 @@ def receive_messages():
             if message:
                 # Display the incoming message in the chat window
                 chat_window.config(state=tk.NORMAL)  # Enable editing the chat window
+                
+                # Strip off the username from the message (everything before ": ")
+                if ": " in message:
+                    message = message.split(": ", 1)[1]  # Strip the username and show only the message part
+                
+                # Display the stripped message in the chat window
                 chat_window.insert(tk.END, message + "\n")
                 chat_window.yview(tk.END)  # Scroll to the bottom
                 chat_window.config(state=tk.DISABLED)  # Disable editing
@@ -38,7 +44,7 @@ def send_message(event=None):
         formatted_message = f"{username}: {message}"  # Add username to the message
         try:
             client_socket.send(formatted_message.encode('utf-8'))  # Send message to server
-            message_entry.delete(0, tk.END)  # Clear the message entry box
+            message_entry.delete(0, tk.END)  # Clear the message entry box after sending
         except Exception as e:
             print(f"Error sending message: {e}")
 
