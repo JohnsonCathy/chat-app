@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import scrolledtext
+from tkinter import scrolledtext, messagebox
 import socket
 import threading
 import sys
@@ -12,8 +12,9 @@ client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 # Global variables
 username = ""
-message_entry = None 
-send_button = None  
+message_entry = None
+send_button = None
+window = None  # Reference to the main window to close it later
 
 # Function to receive messages from the server
 def receive_messages():
@@ -23,24 +24,16 @@ def receive_messages():
             if message:
                 # Display the incoming message in the chat window
                 chat_window.config(state=tk.NORMAL)  # Enable editing the chat window
-                
                 chat_window.insert(tk.END, message + "\n")
                 chat_window.yview(tk.END)  # Scroll to the bottom
                 chat_window.config(state=tk.DISABLED)  # Disable editing
+            else:
+                # If message is empty, it indicates the server has disconnected
+                raise Exception("Server has disconnected.")
         except Exception as e:
             print(f"Error receiving message: {e}")
+            handle_disconnect()
             break
-
-# Function to send messages to the server
-def send_message():
-    message = message_entry.get()  # Get the text from the message entry box
-    if message:
-        formatted_message = f"{message}"
-        try:
-            client_socket.send(formatted_message.encode('utf-8'))  # Send message to server
-            message_entry.delete(0, tk.END)  # Clear the message entry box after sending
-        except Exception as e:
-            print(f"Error sending message: {e}")
 
 # Function to handle username input and start chat
 def set_username():
@@ -53,11 +46,14 @@ def set_username():
         message_entry.config(state=tk.NORMAL)  # Enable message entry
         send_button.config(state=tk.NORMAL)  # Enable the send button
         # Send username to the server
-        client_socket.send(username.encode('utf-8'))
+        try:
+            client_socket.send(username.encode('utf-8'))
+        except:
+            handle_disconnect()
 
 # Function to handle client-side connection and setup the chat UI
 def start_client():
-    global username, message_entry, username_entry, username_label, send_button 
+    global username, message_entry, username_entry, username_label, send_button, window
 
     try:
         client_socket.connect((HOST, PORT))
@@ -105,6 +101,28 @@ def start_client():
         print(f"Error: {e}")
         client_socket.close()
         sys.exit()
+
+# Function to send messages to the server
+def send_message():
+    message = message_entry.get()  # Get the text from the message entry box
+    if message:
+        formatted_message = f"{message}"
+        try:
+            client_socket.send(formatted_message.encode('utf-8'))  # Send message to server
+            message_entry.delete(0, tk.END)  # Clear the message entry box after sending
+        except Exception as e:
+            print(f"Error sending message: {e}")
+            handle_disconnect()
+
+# Function to handle server disconnection or error
+def handle_disconnect():
+    """This function will gracefully handle the disconnection of the client from the server."""
+    # Show a message box to inform the user that the server is no longer available
+    messagebox.showerror("Disconnected", "The server has disconnected. Closing the chat application.")
+    
+    # Close the socket and window
+    client_socket.close()
+    window.quit()  # This will close the Tkinter window
 
 if __name__ == "__main__":
     start_client()
