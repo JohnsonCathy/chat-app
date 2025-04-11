@@ -49,7 +49,7 @@ def broadcast_message(message, sender_socket):
 def start_server():
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.bind((HOST, PORT))
-    server_socket.listen(5)  # Max number of queued connections
+    server_socket.listen(5) 
 
     print(f"Server started on {HOST}:{PORT}")
 

@@ -8,13 +8,12 @@ import sys
 HOST = '127.0.0.1'  # Server IP address
 PORT = 5000        # Server port
 
-# Client socket setup
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 # Global variables
 username = ""
-message_entry = None  # Declare message_entry globally
-send_button = None  # Declare send_button globally
+message_entry = None 
+send_button = None  
 
 # Function to receive messages from the server
 def receive_messages():
@@ -25,7 +24,6 @@ def receive_messages():
                 # Display the incoming message in the chat window
                 chat_window.config(state=tk.NORMAL)  # Enable editing the chat window
                 
-                # Display the stripped message in the chat window
                 chat_window.insert(tk.END, message + "\n")
                 chat_window.yview(tk.END)  # Scroll to the bottom
                 chat_window.config(state=tk.DISABLED)  # Disable editing
@@ -59,7 +57,7 @@ def set_username():
 
 # Function to handle client-side connection and setup the chat UI
 def start_client():
-    global username, message_entry, username_entry, username_label, send_button  # Declare as global
+    global username, message_entry, username_entry, username_label, send_button 
 
     try:
         client_socket.connect((HOST, PORT))
