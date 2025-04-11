@@ -14,7 +14,7 @@ client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 username = ""
 message_entry = None
 send_button = None
-window = None  # Reference to the main window to close it later
+window = None 
 
 # Function to receive messages from the server
 def receive_messages():
@@ -116,13 +116,9 @@ def send_message():
 
 # Function to handle server disconnection or error
 def handle_disconnect():
-    """This function will gracefully handle the disconnection of the client from the server."""
-    # Show a message box to inform the user that the server is no longer available
-    messagebox.showerror("Disconnected", "The server has disconnected. Closing the chat application.")
-    
     # Close the socket and window
     client_socket.close()
-    window.quit()  # This will close the Tkinter window
+    window.quit() 
 
 if __name__ == "__main__":
     start_client()
